@@ -32,27 +32,28 @@
       font-family: 'Outfit', sans-serif;
       background-color: var(--bg-color);
       color: var(--text-main);
-      height: 100vh;
-      overflow: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     .app-container {
       display: flex;
-      height: 100%;
+      flex-direction: column;
+      flex-grow: 1;
     }
 
     .sidebar {
-      width: 350px;
+      width: 100%;
       background: var(--sidebar-bg);
       backdrop-filter: blur(10px);
-      border-right: 1px solid var(--border-color);
-      padding: 2rem;
+      border-bottom: 1px solid var(--border-color);
+      padding: 1.5rem;
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
-      overflow-y: auto;
       z-index: 10;
-      box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
     header h1 {
@@ -75,8 +76,20 @@
 
     .control-panel {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       gap: 1.5rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 0.5rem;
+    }
+
+    .control-panel::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .control-panel::-webkit-scrollbar-thumb {
+      background-color: var(--text-muted);
+      border-radius: 4px;
     }
 
     .card {
@@ -85,6 +98,9 @@
       border-radius: 12px;
       padding: 1.25rem;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      min-width: 260px;
+      scroll-snap-align: start;
+      flex-shrink: 0;
     }
 
     .card:hover {
@@ -223,12 +239,51 @@
       flex-grow: 1;
       position: relative;
       background: radial-gradient(circle at center, #161b22 0%, #0d1117 100%);
+      min-height: 40vh; /* Provides a sane minimum without expanding into overflow */
     }
 
     #network-graph {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
       width: 100%;
       height: 100%;
       outline: none;
+    }
+
+    /* Tooltip styles */
+    .tooltip-container {
+      position: relative;
+    }
+
+    .tooltip-container .tooltip-text {
+      visibility: hidden;
+      width: max-content;
+      max-width: 250px;
+      background-color: var(--card-bg);
+      color: #fff;
+      text-align: center;
+      border: 1px solid var(--accent-color);
+      border-radius: 6px;
+      padding: 0.5rem;
+      position: absolute;
+      z-index: 100;
+      bottom: 120%;
+      /* Position above the button */
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.85rem;
+      pointer-events: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .tooltip-container:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
     }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
@@ -239,7 +294,7 @@
   <div class="app-container">
     <aside class="sidebar">
       <header>
-        <h1>Network<span>Explorer</span></h1>
+        <h1>Friend<span>Network Explorer</span></h1>
         <p>Discover & Connect</p>
       </header>
 
@@ -255,11 +310,6 @@
           <div class="cred-item">
             <span>Password:</span> LGvQqHb406UYlC-1wzKemyorZTYMc5Fh55tCE-RL_PM
           </div>
-        </section>
-
-        <section class="card">
-          <button id="toggle-users-btn" class="secondary-btn" style="background-color: #8b949e; width: 100%;">Fetch
-            Users</button>
         </section>
 
         <section class="card">
@@ -302,6 +352,13 @@
             <button type="submit" class="secondary-btn">Connect Users</button>
           </form>
         </section>
+      </div>
+
+      <div class="fetch-action tooltip-container">
+        <button id="toggle-users-btn" class="secondary-btn" style="background-color: #8b949e; width: 100%;">Fetch
+          Users</button>
+        <span class="tooltip-text">Toggle between viewing all historical users and just the users you've added this
+          session.</span>
       </div>
 
       <div id="status-message" class="status-message"></div>

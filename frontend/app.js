@@ -1,4 +1,4 @@
-const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:' || window.location.hostname === '';
 const API_BASE_URL = isLocal ? 'http://localhost:3000' : '/api';
 
 let network = null;
@@ -61,8 +61,15 @@ const fetchAndRenderGraph = async () => {
     const container = document.getElementById('network-graph');
     const networkData = { nodes, edges };
     const options = {
+      layout: {
+        improvedLayout: true
+      },
       physics: {
-        stabilization: false,
+        stabilization: {
+          enabled: true,
+          iterations: 150,
+          fit: true
+        },
         barnesHut: {
           gravitationalConstant: -2000,
           centralGravity: 0.3,
@@ -80,6 +87,23 @@ const fetchAndRenderGraph = async () => {
       network.destroy();
     }
     network = new vis.Network(container, networkData, options);
+    
+    // Automatically center and scale the graph after stabilization
+    network.once('stabilizationIterationsDone', function () {
+      network.fit({
+        animation: {
+          duration: 800,
+          easingFunction: 'easeInOutQuad'
+        }
+      });
+    });
+
+    // Make the graph responsive to window resizing
+    window.addEventListener('resize', () => {
+      if (network) {
+        network.fit();
+      }
+    });
   } catch (error) {
     console.error(error);
     showMessage('Error loading graph: ' + error.message, true);
