@@ -95,11 +95,11 @@ const fetchAndRenderGraph = async () => {
           label: `${n.name}\n(Age: ${n.age || '?'})${interestLabel}`,
           title: n.name,
           color: {
-            background: '#1f2937', // dark bubble
-            border: '#3b82f6',     // blue border
-            highlight: { background: '#2563eb', border: '#60a5fa' }
+            background: '#ffffff', // white bubble
+            border: '#6366f1',     // indigo border
+            highlight: { background: '#e0e7ff', border: '#4f46e5' }
           },
-          font: { color: '#ffffff', face: 'Outfit' },
+          font: { color: '#0f172a', face: 'Outfit' },
           shape: 'box',
           margin: 10
         };
@@ -111,7 +111,7 @@ const fetchAndRenderGraph = async () => {
         from: e.source,
         to: e.target,
         arrows: 'to',
-        color: { color: '#9ca3af', highlight: '#3b82f6' },
+        color: { color: '#94a3b8', highlight: '#6366f1' },
         smooth: { type: 'continuous' }
       }))
     );
@@ -279,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if(toggleBtn) {
     toggleBtn.addEventListener('click', (e) => {
       showSessionOnly = !showSessionOnly;
-      e.target.style.backgroundColor = showSessionOnly ? '#f85149' : '#8b949e';
+      e.target.style.backgroundColor = showSessionOnly ? 'var(--danger-color)' : 'var(--accent-color)';
       fetchAndRenderGraph();
     });
   }
