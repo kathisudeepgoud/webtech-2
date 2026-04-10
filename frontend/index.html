@@ -64,23 +64,9 @@
       letter-spacing: 0.5px;
     }
 
-    header h1 span:not(.powered-by) {
+    header h1 span {
       color: var(--accent-color);
       font-weight: 300;
-    }
-
-    header h1 .powered-by {
-      font-size: 0.45em;
-      color: var(--secondary-color);
-      font-weight: 600;
-      vertical-align: middle;
-      margin-left: 0.8rem;
-      background: rgba(14, 165, 233, 0.1);
-      padding: 0.3rem 0.8rem;
-      border-radius: 12px;
-      border: 1px solid rgba(14, 165, 233, 0.2);
-      letter-spacing: normal;
-      text-transform: uppercase;
     }
 
     header p {
@@ -90,10 +76,21 @@
     }
 
     .control-panel {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      display: flex;
+      flex-direction: row;
       gap: 1.5rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
       padding-bottom: 0.5rem;
+    }
+
+    .control-panel::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .control-panel::-webkit-scrollbar-thumb {
+      background-color: var(--text-muted);
+      border-radius: 4px;
     }
 
     .card {
@@ -102,6 +99,9 @@
       border-radius: 12px;
       padding: 1.25rem;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      min-width: 260px;
+      scroll-snap-align: start;
+      flex-shrink: 0;
     }
 
     .card:hover {
@@ -360,7 +360,7 @@
   <div class="app-container">
     <aside class="sidebar">
       <header>
-        <h1>Friend<span>Network Explorer</span><span class="powered-by">Powered by Neo4J</span></h1>
+        <h1>Friend<span>Network Explorer</span></h1>
         <p>Discover & Connect</p>
       </header>
 
@@ -372,15 +372,15 @@
           <form id="add-user-form">
             <div class="input-group">
               <label for="userName">Name</label>
-              <input type="text" id="userName" placeholder="e.g. Alice" required>
+              <input type="text" id="userName" required>
             </div>
             <div class="input-group">
               <label for="userAge">Age</label>
-              <input type="number" id="userAge" placeholder="e.g. 25" required>
+              <input type="number" id="userAge" required>
             </div>
             <div class="input-group">
               <label for="userInterest">Interest (Optional)</label>
-              <input type="text" id="userInterest" placeholder="e.g. Coding">
+              <input type="text" id="userInterest">
             </div>
             <button type="submit" class="primary-btn">Create User</button>
           </form>
@@ -391,15 +391,15 @@
           <form id="update-user-form">
             <div class="input-group">
               <label for="updateName">Name</label>
-              <input type="text" id="updateName" placeholder="e.g. Alice" required>
+              <input type="text" id="updateName" required>
             </div>
             <div class="input-group">
               <label for="updateAge">New Age</label>
-              <input type="number" id="updateAge" placeholder="e.g. 26" required>
+              <input type="number" id="updateAge" required>
             </div>
             <div class="input-group">
               <label for="updateInterest">New Interest (Optional)</label>
-              <input type="text" id="updateInterest" placeholder="e.g. Design">
+              <input type="text" id="updateInterest">
             </div>
             <button type="submit" class="primary-btn">Update User</button>
           </form>
@@ -410,11 +410,11 @@
           <form id="connect-users-form">
             <div class="input-group">
               <label for="fromUser">From User (Name)</label>
-              <input type="text" id="fromUser" placeholder="e.g. Alice" required>
+              <input type="text" id="fromUser" required>
             </div>
             <div class="input-group">
               <label for="toUser">To User (Name)</label>
-              <input type="text" id="toUser" placeholder="e.g. Bob" required>
+              <input type="text" id="toUser" required>
             </div>
             <button type="submit" class="secondary-btn">Connect Users</button>
           </form>
@@ -425,7 +425,7 @@
           <form id="delete-user-form">
             <div class="input-group">
               <label for="deleteName">Name</label>
-              <input type="text" id="deleteName" placeholder="e.g. Alice" required>
+              <input type="text" id="deleteName" required>
             </div>
             <button type="submit" class="danger-btn">Delete User</button>
           </form>
