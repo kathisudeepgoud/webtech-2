@@ -40,7 +40,35 @@ const getGraph = async () => {
   }
 };
 
+const getAnalytics = async () => {
+  const session = getSession();
+  try {
+    const usersResult = await session.run('MATCH (u:User) RETURN count(u) as count');
+    const totalUsers = usersResult.records[0].get('count').toNumber();
+
+    const connResult = await session.run('MATCH ()-[r:FRIENDS_WITH]->() RETURN count(r) as count');
+    const totalConnections = connResult.records[0].get('count').toNumber();
+
+    const mostConnResult = await session.run(`
+      MATCH (u:User)
+      OPTIONAL MATCH (u)-[r:FRIENDS_WITH]-()
+      RETURN u.name as name, count(r) as degree
+      ORDER BY degree DESC LIMIT 1
+    `);
+    const mostConnectedUser = mostConnResult.records.length > 0 && mostConnResult.records[0].get('degree').toNumber() > 0 
+      ? mostConnResult.records[0].get('name') 
+      : 'None';
+
+    const averageConnections = totalUsers > 0 ? (totalConnections / totalUsers).toFixed(1) : 0;
+
+    return { totalUsers, totalConnections, mostConnectedUser, averageConnections };
+  } finally {
+    await session.close();
+  }
+};
+
 module.exports = {
   createConnection,
-  getGraph
+  getGraph,
+  getAnalytics
 };

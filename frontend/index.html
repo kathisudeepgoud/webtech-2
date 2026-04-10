@@ -239,7 +239,8 @@
       flex-grow: 1;
       position: relative;
       background: radial-gradient(circle at center, #161b22 0%, #0d1117 100%);
-      min-height: 40vh; /* Provides a sane minimum without expanding into overflow */
+      min-height: 40vh;
+      /* Provides a sane minimum without expanding into overflow */
     }
 
     #network-graph {
@@ -285,6 +286,80 @@
       visibility: visible;
       opacity: 1;
     }
+
+    .floating-stats {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      z-index: 100;
+      min-width: 180px;
+      padding: 1.25rem;
+      pointer-events: none;
+      /* Let graph clicks pass through */
+      background: rgba(30, 36, 44, 0.5);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(240, 246, 252, 0.1);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      align-items: center;
+    }
+
+    .stat-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .stat-value {
+      color: var(--accent-color);
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .analytics-dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      padding: 1.5rem;
+      background: var(--sidebar-bg);
+      border-top: 1px solid var(--border-color);
+    }
+
+    .analytics-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .analytics-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .analytics-card .stat-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+      font-weight: 300;
+      letter-spacing: 0.5px;
+    }
+
+    .analytics-card .stat-value {
+      font-size: 1.8rem;
+    }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
   <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
@@ -299,18 +374,7 @@
       </header>
 
       <div class="control-panel">
-        <section class="card credentials-card">
-          <h2>Database Credentials</h2>
-          <div class="cred-item">
-            <span>URL:</span> neo4j+s://58ca0d90.databases.neo4j.io
-          </div>
-          <div class="cred-item">
-            <span>Username/DB:</span> 58ca0d90
-          </div>
-          <div class="cred-item">
-            <span>Password:</span> LGvQqHb406UYlC-1wzKemyorZTYMc5Fh55tCE-RL_PM
-          </div>
-        </section>
+
 
         <section class="card">
           <h2>Add User</h2>
@@ -323,18 +387,30 @@
               <label for="userAge">Age</label>
               <input type="number" id="userAge" placeholder="e.g. 25" required>
             </div>
+            <div class="input-group">
+              <label for="userInterest">Interest (Optional)</label>
+              <input type="text" id="userInterest" placeholder="e.g. Coding">
+            </div>
             <button type="submit" class="primary-btn">Create User</button>
           </form>
         </section>
 
         <section class="card">
-          <h2>Delete User</h2>
-          <form id="delete-user-form">
+          <h2>Update User</h2>
+          <form id="update-user-form">
             <div class="input-group">
-              <label for="deleteName">Name</label>
-              <input type="text" id="deleteName" placeholder="e.g. Alice" required>
+              <label for="updateName">Name</label>
+              <input type="text" id="updateName" placeholder="e.g. Alice" required>
             </div>
-            <button type="submit" class="danger-btn">Delete User</button>
+            <div class="input-group">
+              <label for="updateAge">New Age</label>
+              <input type="number" id="updateAge" placeholder="e.g. 26" required>
+            </div>
+            <div class="input-group">
+              <label for="updateInterest">New Interest (Optional)</label>
+              <input type="text" id="updateInterest" placeholder="e.g. Design">
+            </div>
+            <button type="submit" class="primary-btn">Update User</button>
           </form>
         </section>
 
@@ -352,11 +428,35 @@
             <button type="submit" class="secondary-btn">Connect Users</button>
           </form>
         </section>
+
+        <section class="card">
+          <h2>Delete User</h2>
+          <form id="delete-user-form">
+            <div class="input-group">
+              <label for="deleteName">Name</label>
+              <input type="text" id="deleteName" placeholder="e.g. Alice" required>
+            </div>
+            <button type="submit" class="danger-btn">Delete User</button>
+          </form>
+        </section>
+
+        <section class="card credentials-card">
+          <h2>Database Credentials</h2>
+          <div class="cred-item">
+            <span>URL:</span> neo4j+s://58ca0d90.databases.neo4j.io
+          </div>
+          <div class="cred-item">
+            <span>Username/DB:</span> 58ca0d90
+          </div>
+          <div class="cred-item">
+            <span>Password:</span> LGvQqHb406UYlC-1wzKemyorZTYMc5Fh55tCE-RL_PM
+          </div>
+        </section>
       </div>
 
       <div class="fetch-action tooltip-container">
-        <button id="toggle-users-btn" class="secondary-btn" style="background-color: #8b949e; width: 100%;">Fetch
-          Users</button>
+        <button id="toggle-users-btn" class="secondary-btn" style="background-color: #8b949e; width: 100%;">Show
+          Network</button>
         <span class="tooltip-text">Toggle between viewing all historical users and just the users you've added this
           session.</span>
       </div>
@@ -365,8 +465,37 @@
     </aside>
 
     <main class="graph-container">
+      <div class="floating-stats">
+        <div class="stat-row">
+          <span class="stat-label">Total DB Users</span>
+          <strong id="db-count" class="stat-value">0</strong>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Session Users</span>
+          <strong id="session-count" class="stat-value">0</strong>
+        </div>
+      </div>
       <div id="network-graph"></div>
     </main>
+
+    <div class="analytics-dashboard">
+      <div class="analytics-card">
+        <span class="stat-label">Total Users</span>
+        <strong id="analytics-total-users" class="stat-value">0</strong>
+      </div>
+      <div class="analytics-card">
+        <span class="stat-label">Total Connections</span>
+        <strong id="analytics-total-connections" class="stat-value">0</strong>
+      </div>
+      <div class="analytics-card">
+        <span class="stat-label">Most Connected</span>
+        <strong id="analytics-most-connected" class="stat-value">-</strong>
+      </div>
+      <div class="analytics-card">
+        <span class="stat-label">Avg Connections</span>
+        <strong id="analytics-avg-connections" class="stat-value">0</strong>
+      </div>
+    </div>
   </div>
 
   <script src="./app.js"></script>
